@@ -1,5 +1,5 @@
 import { getConnection } from './../database/database';
-import { taskQuerys } from './../database/task.queys';
+import { taskQuerys } from './../database/task.querys';
 
 const getAllTask = async (req, res) => {
     try {
