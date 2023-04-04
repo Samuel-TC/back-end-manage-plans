@@ -1,6 +1,7 @@
 import { getConnection } from './../database/database';
 import { managerQuerys } from './../database/manager.querys';
 
+// Get List Manager
 const getAllManager = async (req, res) => {
     try {
         const connection = await getConnection();
