@@ -3,10 +3,8 @@ import { methods as taskController } from "./../controllers/task.controller";
 
 const router = Router();
 
-router.get("/", taskController.getAllTask);
-router.get("/:id", taskController.getOneTask);
-router.post("/", taskController.addTask);
-router.put("/:id", taskController.updateTask);
+router.get("/:id", taskController.getAllTask);
+router.post("/:id", taskController.addTask);
 router.delete("/:id", taskController.deleteOneTask);
 
 export default router;

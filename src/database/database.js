@@ -2,18 +2,20 @@ import mysql from "promise-mysql";
 import config from "./../config";
 
 // Assign database settings
-const connection = mysql.createConnection({
+const configuratin = {
     host: config.host,
     database: config.database,
     user: config.user,
     password: config.password
-});
+}
 
-// Function to export the database connection
-const getConnection = () =>{
-    return connection;
-};
+let connection;
 
-module.exports = {
-    getConnection
-};
+async function getConnection() {
+  if (!connection) {
+    connection = await mysql.createConnection(configuratin);
+  }
+  return connection;
+}
+
+module.exports = { getConnection};

@@ -5,7 +5,7 @@ const getAllProject = async (req, res) => {
     try {
         const connection = await getConnection();
         const result = await connection.query(projectQuerys.getALLProject);
-
+        
         res.json(result);
     } catch (error) {
         res.status(500);
@@ -17,13 +17,14 @@ const getOneProject = async (req, res) => {
     try {
         const projectId = req.params.id;
          // Validate that the ID is an integer
+
          validateId(projectId);
 
         const connection = await getConnection();
         const result = await connection.query(projectQuerys.getOneProject, projectId);
 
         // Validate that the record exists
-        validateRowAfect(result[1].affectedRows, projectId);
+        validateRowAfect(result[0].affectedRows, projectId);
 
         res.json(result);
     } catch (error) {
@@ -34,13 +35,13 @@ const getOneProject = async (req, res) => {
 
 const addProject = async (req, res) => {
     try {
-        const { project_name , project_manager, goal_description, issue_description, desired_outcome } = req.body
-        const project = [ project_name , project_manager, goal_description, issue_description, desired_outcome ];
+        const { project_name , name, goal_description, issue_description, desired_outcome, company_name } = req.body
+        const project = [ project_name , name, goal_description, issue_description, desired_outcome, company_name ];
         const connection = await getConnection();
 
         const result = await connection.query(projectQuerys.addProject, project);
-
-        res.json(result);
+        const id = JSON.stringify(result[0][0].id)
+        res.json(id);
     } catch (error) {
         res.status(500);
         res.send(error.message);
@@ -49,9 +50,9 @@ const addProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
     try {
-        const { project_name , project_manager, goal_description, issue_description, desired_outcome } = req.body
+        const { project_name , name, goal_description, issue_description, desired_outcome, company_name } = req.body
         const projectId = req.params.id;
-        const project = [ projectId, project_name , project_manager, goal_description, issue_description, desired_outcome ];
+        const project = [ projectId, project_name , name, goal_description, issue_description, desired_outcome, company_name ];
         
          // Validate that the ID is an integer
          validateId(projectId);
