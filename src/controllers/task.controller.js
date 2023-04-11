@@ -8,7 +8,7 @@ const getAllTask = async (req, res) => {
         validateId(taskId);
         const connection = await getConnection();
         const result = await connection.query(taskQuerys.getALLTask, taskId);
-
+        console.log(result)
         res.json(result);
     } catch (error) {
         res.status(500);
@@ -25,13 +25,22 @@ const addTask = async (req, res) => {
         validateId(projectId);
         const connection = await getConnection();
         const results = [];
-        console.log(tasks)
-        for (const task of tasks) {
-            const newTask = { ...task, id_project: projectId };
-            console.log(Object.values(newTask))
-            const result = await connection.query(taskQuerys.addTask, Object.values(newTask));
-            results.push(result);
+
+        for (const task of Object.values(tasks)) {
+            const idtask = Object.values(task);
+            if (idtask[0] === '') {
+                const newTask = { ...task, id_project: projectId };
+                const data = Object.values(newTask)
+                data.shift();
+                const result = await connection.query(taskQuerys.addTask, data);
+                results.push(result);
+            } else {
+                const data = Object.values(task)
+                const result = await connection.query(taskQuerys.updateTask, data);
+                results.push(result);
+            }
         }
+
         res.json(results);
     } catch (error) {
         res.status(500).send(error.message);
@@ -43,13 +52,32 @@ const addTask = async (req, res) => {
 const deleteOneTask = async (req, res) => {
     try {
         const taskId = req.params.id;
-
         // Validate that the ID is an integer
         validateId(taskId);
 
         const connection = await getConnection();
         const result = await connection.query(taskQuerys.deleteTask, taskId);
+        // Validate that a record has been deleted
+        validateRowAfect(result.affectedRows, taskId);
 
+        res.json(result);
+
+    } catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
+};
+
+
+const deleteOneTaskByID = async (req, res) => {
+    try {
+        const taskId = req.params.id;
+        // Validate that the ID is an integer
+        validateId(taskId);
+
+        console.log(taskId)
+        const connection = await getConnection();
+        const result = await connection.query(taskQuerys.deleteOneTask, taskId);
         // Validate that a record has been deleted
         validateRowAfect(result.affectedRows, taskId);
 
@@ -78,5 +106,6 @@ const validateRowAfect = (numRow, id) => {
 export const methods = {
     getAllTask,
     addTask,
-    deleteOneTask
+    deleteOneTask,
+    deleteOneTaskByID
 };
